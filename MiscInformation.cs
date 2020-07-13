@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
+using System.Windows.Forms; 
 using ExileCore;
 using ExileCore.PoEMemory.Components;
 using ExileCore.PoEMemory.MemoryObjects;
@@ -20,7 +20,7 @@ namespace MiscInformation
     {
         private string areaName = "";
 
-        private readonly Dictionary<int, float> ArenaEffectiveLevels = new Dictionary<int, float>
+        private Dictionary<int, float> ArenaEffectiveLevels = new Dictionary<int, float>
         {
             {71, 70.94f},
             {72, 71.82f},
@@ -64,7 +64,11 @@ namespace MiscInformation
         private string xpRate = "";
         private string xpReceivingText = "";
 
-       
+
+        public float GetEffectiveLevel(int monsterLevel)
+        {
+            return Convert.ToSingle(-0.03 * Math.Pow(monsterLevel, 2) + 5.17 * monsterLevel - 144.9);
+        }
 
         public override void OnLoad()
         {
@@ -224,6 +228,12 @@ namespace MiscInformation
             var arenaLevel = GameController.Area.CurrentArea.RealLevel;
             var characterLevel = GameController.Player.GetComponent<Player>().Level;
 
+
+            if (arenaLevel > 70 && !ArenaEffectiveLevels.ContainsKey(arenaLevel))
+            {
+                // calculate the effective level and add it to dictionary
+                ArenaEffectiveLevels.Add(arenaLevel, GetEffectiveLevel(arenaLevel));
+            }
             var effectiveArenaLevel = arenaLevel < 71 ? arenaLevel : ArenaEffectiveLevels[arenaLevel];
             var safeZone = Math.Floor(Convert.ToDouble(characterLevel) / 16) + 3;
             var effectiveDifference = Math.Max(Math.Abs(characterLevel - effectiveArenaLevel) - safeZone, 0);
