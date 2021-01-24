@@ -50,7 +50,7 @@ namespace MiscInformation
         private RectangleF leftPanelStartDrawRect = RectangleF.Empty;
         private TimeCache<bool> LevelPenalty;
         private double levelXpPenalty, partyXpPenalty;
-        private float maxX, percentGot;
+        private float maxX, maxY, percentGot;
         private double partytime = 4000;
         private string ping = "";
         private DateTime startTime, lastTime;
@@ -161,15 +161,13 @@ namespace MiscInformation
             time += GameController.DeltaTime;
             var gameUi = GameController.Game.IngameState.IngameUi;
 
-            if (GameController.Area.CurrentArea == null || gameUi.InventoryPanel.IsVisible || gameUi.SynthesisWindow.IsVisibleLocal ||
-                gameUi.BetrayalWindow.IsVisibleLocal)
+            if (GameController.Area.CurrentArea == null || gameUi.InventoryPanel.IsVisible || gameUi.BetrayalWindow.IsVisibleLocal)
             {
                 CanRender = false;
                 return;
             }
 
             var UIHover = GameController.Game.IngameState.UIHover;
-            var miniMap = GameController.Game.IngameState.IngameUi.Map.SmallMiniMap;
 
             if (UIHover.Tooltip != null && UIHover.Tooltip.IsVisibleLocal &&
                 UIHover.Tooltip.GetClientRectCache.Intersects(leftPanelStartDrawRect))
