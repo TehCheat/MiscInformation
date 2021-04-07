@@ -179,7 +179,7 @@ namespace MiscInformation
             CanRender = true;
 
             var calcXpValue = CalcXp.Value;
-            var ingameStateCurFps = GameController.Game.IngameState.CurFps;
+            var ingameStateCurFps = GameController?.Game?.IngameState?.CurFps ?? 1.0f;
             debugInformation.Tick = ingameStateCurFps;
             fps = $"fps:({ingameStateCurFps})";
             areaName = $"{GameController.Area.CurrentArea.DisplayName}";
@@ -189,7 +189,7 @@ namespace MiscInformation
 
         private void CalculateXp()
         {
-            var level = GameController.Player.GetComponent<Player>().Level;
+            var level = GameController.Player.GetComponent<Player>()?.Level ?? 100;
 
             if (level >= 100)
             {
@@ -224,7 +224,7 @@ namespace MiscInformation
         private double LevelXpPenalty()
         {
             var arenaLevel = GameController.Area.CurrentArea.RealLevel;
-            var characterLevel = GameController.Player.GetComponent<Player>().Level;
+            var characterLevel = GameController.Player.GetComponent<Player>()?.Level ?? 100;
 
 
             if (arenaLevel > 70 && !ArenaEffectiveLevels.ContainsKey(arenaLevel))
@@ -254,8 +254,8 @@ namespace MiscInformation
             if (entities.Count == 0)
                 return 1;
 
-            var levels = entities.SelectF(y => y.GetComponent<Player>().Level).ToList();
-            var characterLevel = GameController.Player.GetComponent<Player>().Level;
+            var levels = entities.SelectF(y => y.GetComponent<Player>()?.Level ?? 100).ToList();
+            var characterLevel = GameController.Player.GetComponent<Player>()?.Level ?? 100;
             var partyXpPenalty = Math.Pow(characterLevel + 10, 2.71) / levels.SumF(level => Math.Pow(level + 10, 2.71));
             return partyXpPenalty * levels.Count;
         }
