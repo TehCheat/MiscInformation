@@ -179,12 +179,12 @@ namespace MiscInformation
             CanRender = true;
 
             var calcXpValue = CalcXp.Value;
-            var ingameStateCurFps = GameController?.Game?.IngameState?.CurFps ?? 1.0f;
-            debugInformation.Tick = ingameStateCurFps;
-            fps = $"fps:({ingameStateCurFps})";
+            //var ingameStateCurFps = GameController?.Game?.IngameState?.CurFps ?? 1.0f;
+            //debugInformation.Tick = ingameStateCurFps;
+            fps = $"fps:(N/A)"; // ({ingameStateCurFps})";
             areaName = $"{GameController.Area.CurrentArea.DisplayName}";
-            latency = $"({GameController.Game.IngameState.CurLatency})";
-            ping = $"ping:({GameController.Game.IngameState.CurLatency})";
+            latency = $"({GameController.Game.IngameState.ServerData.Latency})";
+            ping = $"ping:({GameController.Game.IngameState.ServerData.Latency})";
         }
 
         private void CalculateXp()
@@ -265,6 +265,7 @@ namespace MiscInformation
             if (!CanRender)
                 return;
 
+            float miscInfoStartY = GameController.LeftPanel.StartDrawPoint.Y;
             leftPanelStartDrawPoint = GameController.LeftPanel.StartDrawPoint;
             leftPanelStartDrawRect = new RectangleF(leftPanelStartDrawPoint.X, leftPanelStartDrawPoint.Y, 1, 1);
 
@@ -304,7 +305,7 @@ namespace MiscInformation
             drawTextVector2 = Graphics.DrawText(xpGetLeft, leftPanelStartDrawPoint, Settings.XphTextColor, FontAlign.Right);
             leftPanelStartDrawPoint.Y += drawTextVector2.Y;
             rightEndVector2 = leftPanelStartDrawPoint;
-            var max = Math.Max(rightEndVector2.Y, leftEndVector2.Y + 5);
+            var max = Math.Max(rightEndVector2.Y - miscInfoStartY, leftEndVector2.Y + 5 - miscInfoStartY);
             bounds = new RectangleF(leftEndVector2.X, startY - 2, rightEndVector2.X - leftEndVector2.X, max);
 
             // Graphics.DrawImage("preload-start.png", bounds, Settings.BackgroundColor);
