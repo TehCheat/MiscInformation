@@ -50,7 +50,7 @@ namespace MiscInformation
         private RectangleF leftPanelStartDrawRect = RectangleF.Empty;
         private TimeCache<bool> LevelPenalty;
         private double levelXpPenalty, partyXpPenalty;
-        private float maxX, percentGot;
+        private float maxX, maxY, percentGot;
         private double partytime = 4000;
         private string ping = "";
         private DateTime startTime, lastTime;
@@ -161,7 +161,7 @@ namespace MiscInformation
             time += GameController.DeltaTime;
             var gameUi = GameController.Game.IngameState.IngameUi;
 
-            if (GameController.Area.CurrentArea == null || gameUi.InventoryPanel.IsVisible || gameUi.SyndicatePanel.IsVisibleLocal)
+            if (GameController.Area.CurrentArea == null || gameUi.InventoryPanel.IsVisible || gameUi.BetrayalWindow.IsVisibleLocal)
             {
                 CanRender = false;
                 return;
@@ -179,17 +179,17 @@ namespace MiscInformation
             CanRender = true;
 
             var calcXpValue = CalcXp.Value;
-            var ingameStateCurFps = GameController.Game.IngameState.CurFps;
-            debugInformation.Tick = ingameStateCurFps;
-            fps = $"fps:({ingameStateCurFps})";
+            //var ingameStateCurFps = GameController?.Game?.IngameState?.CurFps ?? 1.0f;
+            //debugInformation.Tick = ingameStateCurFps;
+            fps = $"fps:(N/A)"; // ({ingameStateCurFps})";
             areaName = $"{GameController.Area.CurrentArea.DisplayName}";
-            latency = $"({GameController.Game.IngameState.CurLatency})";
-            ping = $"ping:({GameController.Game.IngameState.CurLatency})";
+            latency = $"({GameController.Game.IngameState.ServerData.Latency})";
+            ping = $"ping:({GameController.Game.IngameState.ServerData.Latency})";
         }
 
         private void CalculateXp()
         {
-            var level = GameController.Player.GetComponent<Player>().Level;
+            var level = GameController.Player.GetComponent<Player>()?.Level ?? 100;
 
             if (level >= 100)
             {
@@ -224,7 +224,7 @@ namespace MiscInformation
         private double LevelXpPenalty()
         {
             var arenaLevel = GameController.Area.CurrentArea.RealLevel;
-            var characterLevel = GameController.Player.GetComponent<Player>().Level;
+            var characterLevel = GameController.Player.GetComponent<Player>()?.Level ?? 100;
 
 
             if (arenaLevel > 70 && !ArenaEffectiveLevels.ContainsKey(arenaLevel))
@@ -254,8 +254,8 @@ namespace MiscInformation
             if (entities.Count == 0)
                 return 1;
 
-            var levels = entities.SelectF(y => y.GetComponent<Player>().Level).ToList();
-            var characterLevel = GameController.Player.GetComponent<Player>().Level;
+            var levels = entities.SelectF(y => y.GetComponent<Player>()?.Level ?? 100).ToList();
+            var characterLevel = GameController.Player.GetComponent<Player>()?.Level ?? 100;
             var partyXpPenalty = Math.Pow(characterLevel + 10, 2.71) / levels.SumF(level => Math.Pow(level + 10, 2.71));
             return partyXpPenalty * levels.Count;
         }
@@ -265,6 +265,7 @@ namespace MiscInformation
             if (!CanRender)
                 return;
 
+            float miscInfoStartY = GameController.LeftPanel.StartDrawPoint.Y;
             leftPanelStartDrawPoint = GameController.LeftPanel.StartDrawPoint;
             leftPanelStartDrawRect = new RectangleF(leftPanelStartDrawPoint.X, leftPanelStartDrawPoint.Y, 1, 1);
 
@@ -304,7 +305,7 @@ namespace MiscInformation
             drawTextVector2 = Graphics.DrawText(xpGetLeft, leftPanelStartDrawPoint, Settings.XphTextColor, FontAlign.Right);
             leftPanelStartDrawPoint.Y += drawTextVector2.Y;
             rightEndVector2 = leftPanelStartDrawPoint;
-            var max = Math.Max(rightEndVector2.Y, leftEndVector2.Y + 5);
+            var max = Math.Max(rightEndVector2.Y - miscInfoStartY, leftEndVector2.Y + 5 - miscInfoStartY);
             bounds = new RectangleF(leftEndVector2.X, startY - 2, rightEndVector2.X - leftEndVector2.X, max);
 
             // Graphics.DrawImage("preload-start.png", bounds, Settings.BackgroundColor);
