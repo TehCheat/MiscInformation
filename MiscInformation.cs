@@ -161,7 +161,7 @@ namespace MiscInformation
             time += GameController.DeltaTime;
             var gameUi = GameController.Game.IngameState.IngameUi;
 
-            if (GameController.Area.CurrentArea == null || gameUi.InventoryPanel.IsVisible || gameUi.BetrayalWindow.IsVisibleLocal)
+            if (GameController.Area.CurrentArea == null || gameUi.InventoryPanel.IsVisible || gameUi.SyndicatePanel.IsVisibleLocal)
             {
                 CanRender = false;
                 return;
