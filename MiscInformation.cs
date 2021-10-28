@@ -254,7 +254,7 @@ namespace MiscInformation
             if (entities.Count == 0)
                 return 1;
 
-            var levels = entities.SelectF(y => y.GetComponent<Player>()?.Level ?? 100).ToList();
+            var levels = entities.Select(y => y.GetComponent<Player>()?.Level ?? 100).ToList();
             var characterLevel = GameController.Player.GetComponent<Player>()?.Level ?? 100;
             var partyXpPenalty = Math.Pow(characterLevel + 10, 2.71) / levels.SumF(level => Math.Pow(level + 10, 2.71));
             return partyXpPenalty * levels.Count;
@@ -264,9 +264,11 @@ namespace MiscInformation
         {
             if (!CanRender)
                 return;
-
-            float miscInfoStartY = GameController.LeftPanel.StartDrawPoint.Y;
-            leftPanelStartDrawPoint = GameController.LeftPanel.StartDrawPoint;
+            Vector2 origStartPoint = GameController.LeftPanel.StartDrawPoint;
+            float miscInfoStartY = origStartPoint.Y;
+            leftPanelStartDrawPoint = origStartPoint.Translate(
+                -GameController.IngameState.IngameUi.MapSideUI.Width, 0).Translate(
+                Settings.DrawXOffset.Value, 0);
             leftPanelStartDrawRect = new RectangleF(leftPanelStartDrawPoint.X, leftPanelStartDrawPoint.Y, 1, 1);
 
             leftPanelStartDrawPoint.X -= maxX;
@@ -311,7 +313,7 @@ namespace MiscInformation
             // Graphics.DrawImage("preload-start.png", bounds, Settings.BackgroundColor);
             // Graphics.DrawImage("preload-end.png", bounds, Settings.BackgroundColor);
             Graphics.DrawImage("preload-new.png", bounds, Settings.BackgroundColor);
-            GameController.LeftPanel.StartDrawPoint = new Vector2(leftPanelStartDrawPoint.X, max + 10);
+            GameController.LeftPanel.StartDrawPoint = new Vector2(origStartPoint.X, max + 10);
         }
     }
 }
