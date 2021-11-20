@@ -19,6 +19,7 @@ namespace MiscInformation
         }
 
         public ToggleNode Enable { get; set; } = new ToggleNode(true);
+        public RangeNode<int> DrawXOffset { get; set; } = new RangeNode<int>(0, -150, 150);
         public ColorNode BackgroundColor { get; set; }
         public ColorNode AreaTextColor { get; set; }
         public ColorNode XphTextColor { get; set; }
